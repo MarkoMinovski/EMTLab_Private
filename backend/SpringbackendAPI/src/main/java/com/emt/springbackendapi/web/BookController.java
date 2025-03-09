@@ -33,7 +33,7 @@ public class BookController {
     }
 
     @PostMapping("/update/{id}")
-    private ResponseEntity<Book> updateBook(@PathVariable Long id, BookDTO bookDTO) {
+    private ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody BookDTO bookDTO) {
         return this.bookService.update(id, bookDTO.getName(), bookDTO.getCategory(),
                 this.authorService.findById(bookDTO.getAuthor()).get()).map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -55,5 +55,10 @@ public class BookController {
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/update/borrow/{id}")
+    private ResponseEntity<Book> borrowBook(@PathVariable Long id) {
+        return this.bookService.borrow(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 }

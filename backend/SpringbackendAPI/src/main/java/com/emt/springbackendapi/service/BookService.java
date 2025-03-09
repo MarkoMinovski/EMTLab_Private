@@ -14,4 +14,5 @@ public interface BookService {
     Optional<Book> update(Long id, String name, Category category, Author a);
     void delete(Long id);
     void setUnborrowable(Long id);
+    Optional<Book> borrow(Long id);
 }

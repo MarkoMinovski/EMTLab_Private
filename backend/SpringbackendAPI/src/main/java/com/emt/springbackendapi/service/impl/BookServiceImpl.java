@@ -62,4 +62,21 @@ public class BookServiceImpl implements BookService {
         b.setAvailableCopies(0);
         this.bookRepository.save(b);
     }
+
+    @Override
+    public Optional<Book> borrow(Long id) {
+        Book b = this.bookRepository.findById(id).orElse(null);
+
+        if (b != null) {
+            if (b.getAvailableCopies() > 0) {
+                b.setAvailableCopies(b.getAvailableCopies() - 1);
+            }
+
+            return Optional.of(this.bookRepository.save(b));
+        } else {
+            System.out.println("Book that needed updating not found!");
+            return Optional.empty();
+        }
+    }
+
 }
