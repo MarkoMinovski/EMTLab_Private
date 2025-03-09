@@ -1,0 +1,65 @@
+package com.emt.springbackendapi.service.impl;
+
+import com.emt.springbackendapi.model.Author;
+import com.emt.springbackendapi.model.Book;
+import com.emt.springbackendapi.model.enums.Category;
+import com.emt.springbackendapi.repository.AuthorRepository;
+import com.emt.springbackendapi.repository.BookRepository;
+import com.emt.springbackendapi.service.BookService;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class BookServiceImpl implements BookService {
+
+    private final BookRepository bookRepository;
+
+    public BookServiceImpl(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
+    }
+
+    @Override
+    public List<Book> findAll() {
+        return this.bookRepository.findAll();
+    }
+
+    @Override
+    public Optional<Book> findById(Long id) {
+        return this.bookRepository.findById(id);
+    }
+
+    @Override
+    public Optional<Book> create(String name, Category category, Integer availableCopies, Author a) {
+        return Optional.of(this.bookRepository.save(new Book(name, category, availableCopies, a)));
+    }
+
+    @Override
+    public Optional<Book> update(Long id, String name, Category category, Author a) {
+        Book b = this.bookRepository.findById(id).orElse(null);
+
+        if (b != null) {
+            b.setName(name);
+            b.setCategory(category);
+            b.setAuthor(a);
+
+            return Optional.of(this.bookRepository.save(b));
+        } else {
+            System.out.println("Book that needed updating not found!");
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public void delete(Long id) {
+        this.bookRepository.delete(this.bookRepository.findById(id).get());
+    }
+
+    @Override
+    public void setUnborrowable(Long id) {
+        Book b = this.bookRepository.findById(id).get();
+        b.setAvailableCopies(0);
+        this.bookRepository.save(b);
+    }
+}
