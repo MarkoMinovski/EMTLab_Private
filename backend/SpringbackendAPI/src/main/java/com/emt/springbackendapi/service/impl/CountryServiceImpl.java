@@ -54,4 +54,14 @@ public class CountryServiceImpl implements CountryService {
     public void delete(Long id) {
         this.countryRepository.delete(this.countryRepository.findById(id).get());
     }
+
+    @Override
+    public List<Country> findByNameContainingString(String s) {
+        return this.countryRepository.findCountriesByNameContainingIgnoreCase(s);
+    }
+
+    @Override
+    public List<Country> findByContinent(String continent) {
+        return this.countryRepository.findCountriesByContinentEqualsIgnoreCase(continent);
+    }
 }

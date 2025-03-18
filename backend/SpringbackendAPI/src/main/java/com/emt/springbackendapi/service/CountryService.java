@@ -15,4 +15,9 @@ public interface CountryService {
     Optional<Country> update(Long id, String name, String continent);
 
     void delete(Long id);
+
+    List<Country> findByNameContainingString(String s);
+
+    List<Country> findByContinent(String continent);
+
 }

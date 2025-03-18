@@ -4,6 +4,8 @@ import com.emt.springbackendapi.model.enums.Category;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Data
 @Entity
@@ -17,6 +19,7 @@ public class Book {
     private Category category;
 
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     private Author author;
 
     private int availableCopies;
