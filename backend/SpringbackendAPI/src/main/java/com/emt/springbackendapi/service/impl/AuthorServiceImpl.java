@@ -14,11 +14,9 @@ import java.util.Optional;
 public class AuthorServiceImpl implements AuthorService {
 
     private final AuthorRepository authorRepository;
-    private final CountryRepository countryRepository;
 
-    public AuthorServiceImpl(AuthorRepository authorRepository, CountryRepository countryRepository) {
+    public AuthorServiceImpl(AuthorRepository authorRepository) {
         this.authorRepository = authorRepository;
-        this.countryRepository = countryRepository;
     }
 
 

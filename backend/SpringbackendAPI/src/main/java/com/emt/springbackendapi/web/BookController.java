@@ -1,13 +1,17 @@
 package com.emt.springbackendapi.web;
 
+import com.emt.springbackendapi.model.Author;
 import com.emt.springbackendapi.model.Book;
 import com.emt.springbackendapi.model.dto.BookDTO;
+import com.emt.springbackendapi.model.enums.Category;
 import com.emt.springbackendapi.service.AuthorService;
 import com.emt.springbackendapi.service.BookService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/books")
@@ -61,4 +65,26 @@ public class BookController {
     private ResponseEntity<Book> borrowBook(@PathVariable Long id) {
         return this.bookService.borrow(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/{id}")
+    private ResponseEntity<Book> getBookById(@PathVariable Long id) {
+        return this.bookService.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/by-author/{authorId}")
+    private List<Book> getBooksByAuthor(@PathVariable Long authorId) {
+        Optional<Author> target = this.authorService.findById(authorId);
+
+        if (target.isPresent()) {
+            return this.bookService.getBooksByAuthor(target.get());
+        }
+
+        return new ArrayList<>();
+    }
+
+    @GetMapping("/by-category/{categoryType}")
+    private List<Book> getBooksByCategory(@PathVariable Category categoryType) {
+        return this.bookService.getBooksByCategory(categoryType);
+    }
+
 }

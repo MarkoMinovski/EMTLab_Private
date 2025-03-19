@@ -15,4 +15,8 @@ public interface BookService {
     void delete(Long id);
     void setUnborrowable(Long id);
     Optional<Book> borrow(Long id);
+
+    List<Book> getBooksByAuthor(Author a);
+    List<Book> getBooksByCategory(Category c);
+    List<Book> getAvailableBooks();
 }

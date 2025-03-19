@@ -8,6 +8,7 @@ import com.emt.springbackendapi.repository.BookRepository;
 import com.emt.springbackendapi.service.BookService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,9 +16,11 @@ import java.util.Optional;
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
+    private final AuthorRepository authorRepository;
 
-    public BookServiceImpl(BookRepository bookRepository) {
+    public BookServiceImpl(BookRepository bookRepository, AuthorRepository authorRepository) {
         this.bookRepository = bookRepository;
+        this.authorRepository = authorRepository;
     }
 
     @Override
@@ -77,6 +80,27 @@ public class BookServiceImpl implements BookService {
             System.out.println("Book that needed updating not found!");
             return Optional.empty();
         }
+    }
+
+    @Override
+    public List<Book> getBooksByAuthor(Author a) {
+        Optional<Author> target = this.authorRepository.findById(a.getId());
+
+        if (target.isPresent()) {
+            return this.bookRepository.findBooksByAuthor_Id(target.get().getId());
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    @Override
+    public List<Book> getBooksByCategory(Category c) {
+        return this.bookRepository.findBooksByCategory(c);
+    }
+
+    @Override
+    public List<Book> getAvailableBooks() {
+        return this.bookRepository.findBookByAvailableCopiesGreaterThan(0);
     }
 
 }
