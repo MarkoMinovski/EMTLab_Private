@@ -1,9 +1,11 @@
 package com.emt.springbackendapi.config;
 
 import com.emt.springbackendapi.model.enums.Category;
+import com.emt.springbackendapi.model.enums.Role;
 import com.emt.springbackendapi.service.AuthorService;
 import com.emt.springbackendapi.service.BookService;
 import com.emt.springbackendapi.service.CountryService;
+import com.emt.springbackendapi.service.UserService;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
@@ -12,11 +14,13 @@ public class DataInitializer {
     private final CountryService countryService;
     private final AuthorService authorService;
     private final BookService bookService;
+    private final UserService userService;
 
-    public DataInitializer(CountryService countryService, AuthorService authorService, BookService bookService) {
+    public DataInitializer(CountryService countryService, AuthorService authorService, BookService bookService, UserService userService) {
         this.countryService = countryService;
         this.authorService = authorService;
         this.bookService = bookService;
+        this.userService = userService;
     }
 
     @PostConstruct
@@ -46,6 +50,9 @@ public class DataInitializer {
         bookService.create("Faust", Category.HISTORICAL, 6, authorService.findById(5L).get());
         bookService.create("Malgudi Days", Category.BIOGRAPHY, 4, authorService.findById(6L).get());
         bookService.create("L'etranger", Category.CLASSICS, 9, authorService.findById(7L).get());
+
+        userService.register("xera", "abcd", "abcd", Role.ROLE_ADMIN);
+
     }
 
 }
