@@ -1,12 +1,14 @@
 package com.emt.springbackendapi.web;
 
-import com.emt.springbackendapi.model.User;
+import com.emt.springbackendapi.model.domain.User;
 import com.emt.springbackendapi.model.dto.UserDTO;
 import com.emt.springbackendapi.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -29,7 +31,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody UserDTO userDTO, HttpServletRequest request) {
+    public ResponseEntity<?> login(@RequestBody UserDTO userDTO, HttpServletRequest request) {
         Optional<User> user = this.userApplicationService.login(userDTO.username(), userDTO.password());
 
         if (user.isPresent()) {
@@ -37,8 +39,16 @@ public class UserController {
             return ResponseEntity.ok(user.get());
         }
 
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("error", "Invalid username or password", "status", 401));
     }
+
+    /*@GetMapping("/login")
+    public ResponseEntity<Void> getLoginPageRedirect() {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).header("Allow", "Post")
+                .build();
+    }*/
+
 
 
     @GetMapping("/logout")

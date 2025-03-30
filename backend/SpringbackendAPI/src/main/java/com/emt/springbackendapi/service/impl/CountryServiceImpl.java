@@ -1,6 +1,6 @@
 package com.emt.springbackendapi.service.impl;
 
-import com.emt.springbackendapi.model.Country;
+import com.emt.springbackendapi.model.domain.Country;
 import com.emt.springbackendapi.repository.CountryRepository;
 import com.emt.springbackendapi.service.CountryService;
 import org.springframework.stereotype.Service;

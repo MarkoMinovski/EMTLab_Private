@@ -1,7 +1,7 @@
 package com.emt.springbackendapi.service.impl;
 
-import com.emt.springbackendapi.model.Author;
-import com.emt.springbackendapi.model.Book;
+import com.emt.springbackendapi.model.domain.Author;
+import com.emt.springbackendapi.model.domain.Book;
 import com.emt.springbackendapi.model.enums.Category;
 import com.emt.springbackendapi.repository.AuthorRepository;
 import com.emt.springbackendapi.repository.BookRepository;

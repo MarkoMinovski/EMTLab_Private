@@ -1,9 +1,8 @@
 package com.emt.springbackendapi.service.impl;
 
-import com.emt.springbackendapi.model.Author;
-import com.emt.springbackendapi.model.Country;
+import com.emt.springbackendapi.model.domain.Author;
+import com.emt.springbackendapi.model.domain.Country;
 import com.emt.springbackendapi.repository.AuthorRepository;
-import com.emt.springbackendapi.repository.CountryRepository;
 import com.emt.springbackendapi.service.AuthorService;
 import org.springframework.stereotype.Service;
 

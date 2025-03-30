@@ -1,7 +1,7 @@
 package com.emt.springbackendapi.web;
 
-import com.emt.springbackendapi.model.Author;
-import com.emt.springbackendapi.model.Country;
+import com.emt.springbackendapi.model.domain.Author;
+import com.emt.springbackendapi.model.domain.Country;
 import com.emt.springbackendapi.model.dto.AuthorDTO;
 import com.emt.springbackendapi.service.AuthorService;
 import com.emt.springbackendapi.service.CountryService;

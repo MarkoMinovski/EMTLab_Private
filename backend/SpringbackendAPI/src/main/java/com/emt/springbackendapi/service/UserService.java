@@ -1,7 +1,7 @@
 package com.emt.springbackendapi.service;
 
 import com.emt.springbackendapi.model.enums.Role;
-import com.emt.springbackendapi.model.User;
+import com.emt.springbackendapi.model.domain.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.Optional;

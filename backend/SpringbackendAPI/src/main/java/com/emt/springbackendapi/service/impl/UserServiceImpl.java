@@ -1,6 +1,6 @@
 package com.emt.springbackendapi.service.impl;
 
-import com.emt.springbackendapi.model.User;
+import com.emt.springbackendapi.model.domain.User;
 import com.emt.springbackendapi.model.enums.Role;
 import com.emt.springbackendapi.repository.UserRepository;
 import com.emt.springbackendapi.service.UserService;
@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -25,12 +26,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> register(String username, String password,
                          String repeatPassword, Role role) {
-
-        if (role == null) {
-            return Optional.of(userRepository.save(new User(username, passwordEncoder.encode(password))));
-        }
-
-        return Optional.of(userRepository.save(new User(username, passwordEncoder.encode(password), role)));
+        return Optional.of(userRepository.save(new User(username, passwordEncoder.encode(password),
+                Objects.requireNonNullElse(role, Role.ROLE_USER))));
     }
 
     @Override

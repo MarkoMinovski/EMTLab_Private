@@ -51,7 +51,7 @@ public class DataInitializer {
         bookService.create("Malgudi Days", Category.BIOGRAPHY, 4, authorService.findById(6L).get());
         bookService.create("L'etranger", Category.CLASSICS, 9, authorService.findById(7L).get());
 
-        userService.register("xera", "abcd", "abcd", Role.ROLE_ADMIN);
+        userService.register("xera", "abcd", "abcd", Role.ROLE_LIBRARIAN);
 
     }
 

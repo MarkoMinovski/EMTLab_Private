@@ -1,6 +1,6 @@
 package com.emt.springbackendapi.service;
 
-import com.emt.springbackendapi.model.Country;
+import com.emt.springbackendapi.model.domain.Country;
 
 import java.util.List;
 import java.util.Optional;

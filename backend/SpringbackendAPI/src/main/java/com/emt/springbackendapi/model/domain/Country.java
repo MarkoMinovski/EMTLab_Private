@@ -1,4 +1,4 @@
-package com.emt.springbackendapi.model;
+package com.emt.springbackendapi.model.domain;
 
 
 import jakarta.persistence.Entity;

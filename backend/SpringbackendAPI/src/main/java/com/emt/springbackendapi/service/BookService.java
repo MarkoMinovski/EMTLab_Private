@@ -1,7 +1,7 @@
 package com.emt.springbackendapi.service;
 
-import com.emt.springbackendapi.model.Author;
-import com.emt.springbackendapi.model.Book;
+import com.emt.springbackendapi.model.domain.Author;
+import com.emt.springbackendapi.model.domain.Book;
 import com.emt.springbackendapi.model.enums.Category;
 
 import java.util.List;

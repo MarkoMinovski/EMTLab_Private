@@ -1,0 +1,8 @@
+POST http://localhost:8080/api/users/login
+Content-Type: application/x-www-form-urlencoded
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:136.0) Gecko/20100101 Firefox/136.0
+
+username=marko&password=abcd
+
+
+

@@ -1,6 +1,6 @@
 package com.emt.springbackendapi.web;
 
-import com.emt.springbackendapi.model.Country;
+import com.emt.springbackendapi.model.domain.Country;
 import com.emt.springbackendapi.service.CountryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

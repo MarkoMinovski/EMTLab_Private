@@ -1,6 +1,6 @@
 package com.emt.springbackendapi.repository;
 
-import com.emt.springbackendapi.model.Book;
+import com.emt.springbackendapi.model.domain.Book;
 import com.emt.springbackendapi.model.enums.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 

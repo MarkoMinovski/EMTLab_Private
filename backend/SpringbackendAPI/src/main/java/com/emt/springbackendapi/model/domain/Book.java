@@ -1,4 +1,4 @@
-package com.emt.springbackendapi.model;
+package com.emt.springbackendapi.model.domain;
 
 import com.emt.springbackendapi.model.enums.Category;
 import jakarta.persistence.*;
