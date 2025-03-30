@@ -1,7 +1,8 @@
 package com.emt.springbackendapi.web;
 
 import com.emt.springbackendapi.model.domain.Country;
-import com.emt.springbackendapi.service.CountryService;
+import com.emt.springbackendapi.model.dto.UpdateCountryDTO;
+import com.emt.springbackendapi.service.application.CountryApplicationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,9 +14,9 @@ import java.util.Optional;
 @RequestMapping("/api/country")
 public class CountryController {
 
-    private final CountryService countryService;
+    private final CountryApplicationService countryService;
 
-    public CountryController(CountryService countryService) {
+    public CountryController(CountryApplicationService countryService) {
         this.countryService = countryService;
     }
 
@@ -23,16 +24,16 @@ public class CountryController {
      * Gets countries from the database that match the specified filters, or all of them if none are provided.
      * Please do not provide both request parameters! There are no two countries with the same name
      * on Earth on different continents. I mean logically it makes no sense. If you do, the method returns empty.
-     * @param nameString the string containing the name of the country you are requesting.
+     *
+     * @param nameString      the string containing the name of the country you are requesting.
      * @param continentString the string equalling the name of the continent you are requesting. Note that
      *                        unlike the nameString parameter, the continentString must match exactly (I mean,
      *                        it makes no sense to allow substring searching for continents)
-     *
      * @return List containing the result - or empty if both request parameters are provided.
      */
     @GetMapping()
-    public List<Country> getCountries(@RequestParam(required = false) String nameString,
-                                      @RequestParam(required = false) String continentString) {
+    public List<UpdateCountryDTO> getCountries(@RequestParam(required = false) String nameString,
+                                               @RequestParam(required = false) String continentString) {
 
         if (nameString != null && continentString != null) {
             return new ArrayList<>();
@@ -48,19 +49,19 @@ public class CountryController {
     }
 
     @PutMapping("/add")
-    public ResponseEntity<Country> addCountry(String name, String continent) {
+    public ResponseEntity<UpdateCountryDTO> addCountry(String name, String continent) {
         return this.countryService.create(name, continent).map(ResponseEntity::ok).orElse(ResponseEntity.ok().build());
     }
 
     @PostMapping("/update/{id}")
-    public ResponseEntity<Country> updateCountry(String name, String continent, @PathVariable Long id) {
+    public ResponseEntity<UpdateCountryDTO> updateCountry(String name, String continent, @PathVariable Long id) {
         return this.countryService.update(id, name, continent).map(ResponseEntity::ok)
                 .orElse(ResponseEntity.ok().build());
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteCountry(@PathVariable Long id) {
-        Optional<Country> c = this.countryService.findById(id);
+        Optional<UpdateCountryDTO> c = this.countryService.findById(id);
 
         if (c.isPresent()) {
             this.countryService.delete(id);

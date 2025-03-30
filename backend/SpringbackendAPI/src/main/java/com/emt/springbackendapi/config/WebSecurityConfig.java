@@ -48,7 +48,7 @@ public class WebSecurityConfig {
                         "/api/books",
                         "/api/users/login",
                         "/api/users/register"
-                ).permitAll().anyRequest().hasRole("ADMIN"))
+                ).permitAll().anyRequest().hasRole("LIBRARIAN"))
                 .formLogin((form) -> form.loginProcessingUrl(
                                 "/api/users/login")
                         .permitAll()
