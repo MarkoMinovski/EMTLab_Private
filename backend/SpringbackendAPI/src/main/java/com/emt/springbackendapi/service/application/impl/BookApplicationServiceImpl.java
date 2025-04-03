@@ -2,9 +2,12 @@ package com.emt.springbackendapi.service.application.impl;
 
 import com.emt.springbackendapi.model.domain.Author;
 import com.emt.springbackendapi.model.domain.Book;
+import com.emt.springbackendapi.model.domain.User;
 import com.emt.springbackendapi.model.dto.UpdateBookDTO;
 import com.emt.springbackendapi.model.enums.Category;
+import com.emt.springbackendapi.model.exception.NoCopiesAvailableException;
 import com.emt.springbackendapi.repository.BookRepository;
+import com.emt.springbackendapi.repository.UserRepository;
 import com.emt.springbackendapi.service.application.BookApplicationService;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +18,11 @@ import java.util.Optional;
 public class BookApplicationServiceImpl implements BookApplicationService {
 
     private final BookRepository bookRepository;
+    private final UserRepository userRepository;
 
-    public BookApplicationServiceImpl(BookRepository bookRepository) {
+    public BookApplicationServiceImpl(BookRepository bookRepository, UserRepository userRepository) {
         this.bookRepository = bookRepository;
+        this.userRepository = userRepository;
     }
 
 
@@ -63,16 +68,34 @@ public class BookApplicationServiceImpl implements BookApplicationService {
     }
 
     @Override
-    public Optional<UpdateBookDTO> borrow(Long id) {
-        Book target = bookRepository.findById(id).get();
+    public Optional<UpdateBookDTO> addToWishlist(Long bookID, Long userID) throws NoCopiesAvailableException {
+        Book bookToBorrow = bookRepository.findById(bookID).get();
+        User borrower = userRepository.findById(userID).get();
 
-        if (target.getAvailableCopies() > 0) {
-            target.setAvailableCopies(target.getAvailableCopies() - 1);
-            target = bookRepository.save(target);
+        if (bookToBorrow.getAvailableCopies() > 0) {
+            bookToBorrow = bookRepository.save(bookToBorrow);
+            borrower.addToWishlist(bookToBorrow);
+            userRepository.save(borrower);
+            userRepository.flush();
+            return Optional.of(UpdateBookDTO.from(bookToBorrow));
+        } else {
+            throw new NoCopiesAvailableException(bookToBorrow.getName());
         }
 
 
-        return Optional.of(UpdateBookDTO.from(target));
+    }
+
+    @Override
+    public Optional<UpdateBookDTO> borrow(Long bookID) throws NoCopiesAvailableException {
+        Book bookToBorrow = bookRepository.findById(bookID).get();
+        if (bookToBorrow.getAvailableCopies() > 0) {
+            bookToBorrow.setAvailableCopies(bookToBorrow.getAvailableCopies() - 1);
+            bookToBorrow = bookRepository.save(bookToBorrow);
+            return Optional.of(UpdateBookDTO.from(bookToBorrow));
+        } else {
+            throw new NoCopiesAvailableException(bookToBorrow.getName());
+        }
+
     }
 
     @Override

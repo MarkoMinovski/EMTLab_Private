@@ -3,6 +3,12 @@ package com.emt.springbackendapi.web;
 import com.emt.springbackendapi.model.domain.Country;
 import com.emt.springbackendapi.model.dto.UpdateCountryDTO;
 import com.emt.springbackendapi.service.application.CountryApplicationService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +18,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/country")
+@Tag(name = "Country Controller", description = "API for managing the country entity (table) in the database")
 public class CountryController {
 
     private final CountryApplicationService countryService;
@@ -20,20 +27,15 @@ public class CountryController {
         this.countryService = countryService;
     }
 
-    /**
-     * Gets countries from the database that match the specified filters, or all of them if none are provided.
-     * Please do not provide both request parameters! There are no two countries with the same name
-     * on Earth on different continents. I mean logically it makes no sense. If you do, the method returns empty.
-     *
-     * @param nameString      the string containing the name of the country you are requesting.
-     * @param continentString the string equalling the name of the continent you are requesting. Note that
-     *                        unlike the nameString parameter, the continentString must match exactly (I mean,
-     *                        it makes no sense to allow substring searching for continents)
-     * @return List containing the result - or empty if both request parameters are provided.
-     */
+    @Operation(summary = "Get countries", description = "Fetch countries based on name or continent.")
+    @ApiResponse(responseCode = "200", description = "List of matching countries returned")
     @GetMapping()
-    public List<UpdateCountryDTO> getCountries(@RequestParam(required = false) String nameString,
-                                               @RequestParam(required = false) String continentString) {
+    public List<UpdateCountryDTO> getCountries(@RequestParam(required = false)
+                                                   @Parameter(description = "Partial or full name of the country")
+                                                   String nameString,
+                                               @RequestParam(required = false)
+                                               @Parameter(description = "Exact name of the continent")
+                                               String continentString) {
 
         if (nameString != null && continentString != null) {
             return new ArrayList<>();
@@ -48,17 +50,26 @@ public class CountryController {
         return this.countryService.findAll();
     }
 
+    @Operation(summary = "Add a country", description = "Creates a new country entry.")
+    @ApiResponse(responseCode = "200", description = "Country successfully added",
+            content = @Content(schema = @Schema(implementation = UpdateCountryDTO.class)))
     @PutMapping("/add")
     public ResponseEntity<UpdateCountryDTO> addCountry(String name, String continent) {
         return this.countryService.create(name, continent).map(ResponseEntity::ok).orElse(ResponseEntity.ok().build());
     }
 
+    @Operation(summary = "Update a country", description = "Updates the details of an existing country.")
+    @ApiResponse(responseCode = "200", description = "Country successfully updated",
+            content = @Content(schema = @Schema(implementation = UpdateCountryDTO.class)))
     @PostMapping("/update/{id}")
     public ResponseEntity<UpdateCountryDTO> updateCountry(String name, String continent, @PathVariable Long id) {
         return this.countryService.update(id, name, continent).map(ResponseEntity::ok)
                 .orElse(ResponseEntity.ok().build());
     }
 
+    @Operation(summary = "Delete a country", description = "Deletes a country by its ID.")
+    @ApiResponse(responseCode = "200", description = "Country successfully deleted")
+    @ApiResponse(responseCode = "404", description = "Country not found")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteCountry(@PathVariable Long id) {
         Optional<UpdateCountryDTO> c = this.countryService.findById(id);
@@ -71,8 +82,6 @@ public class CountryController {
 
         return ResponseEntity.notFound().build();
     }
-
-
 
 
 }

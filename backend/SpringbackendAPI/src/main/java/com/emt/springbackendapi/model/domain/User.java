@@ -8,8 +8,10 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -31,20 +33,26 @@ public class User implements UserDetails {
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
+    @OneToMany(fetch = FetchType.EAGER)
+    private List<Book> wishlist;
+
     public User(String username, String password, Role role) {
         this.username = username;
         this.password = password;
         this.role = role;
+        this.wishlist = new ArrayList<>();
     }
 
     public User(String username, String password) {
         this.username = username;
         this.password = password;
+        this.wishlist = new ArrayList<>();
     }
 
     public User(UserDetails userDetails) {
         this.username = userDetails.getUsername();
         this.password = userDetails.getPassword();
+        this.wishlist = new ArrayList<>();
     }
 
 
@@ -52,6 +60,12 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList((GrantedAuthority) role);
     }
+
+
+    public void addToWishlist(Book b) {
+        this.wishlist.add(b);
+    }
+
 
     @Override
     public boolean isAccountNonExpired() {

@@ -1,14 +1,20 @@
 package com.emt.springbackendapi.service.impl;
 
+import com.emt.springbackendapi.model.domain.Book;
 import com.emt.springbackendapi.model.domain.User;
+import com.emt.springbackendapi.model.dto.UpdateBookDTO;
 import com.emt.springbackendapi.model.enums.Role;
+import com.emt.springbackendapi.model.exception.NoCopiesAvailableException;
 import com.emt.springbackendapi.repository.UserRepository;
 import com.emt.springbackendapi.service.UserService;
+import com.emt.springbackendapi.service.application.impl.BookApplicationServiceImpl;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -16,10 +22,13 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final BookApplicationServiceImpl bookApplicationService;
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, BookApplicationServiceImpl bookApplicationService,
+                           PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.bookApplicationService = bookApplicationService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -41,8 +50,34 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<List<UpdateBookDTO>> checkoutWishlist(String username) throws NoCopiesAvailableException {
+        User user = userRepository.findByUsername(username);
+        List<Book> wishlist = user.getWishlist();
+        List<UpdateBookDTO> pickedUpBooks = new ArrayList<>();
+
+        while (!wishlist.isEmpty()) {
+            try {
+                bookApplicationService.borrow(wishlist.getFirst().getId());
+
+                // if we get past this comment, we didn't throw an exception
+                wishlist.remove(wishlist.getFirst());
+                pickedUpBooks.add(UpdateBookDTO.from(wishlist.getFirst()));
+            } catch (NoCopiesAvailableException _) {
+
+            } finally {
+                userRepository.save(user);
+            }
+            return Optional.of(pickedUpBooks);
+        }
+
+        return Optional.empty();
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // ??? it's the same thing
         return userRepository.findByUsername(username);
     }
+
+
 }
