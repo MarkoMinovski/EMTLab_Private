@@ -53,24 +53,31 @@ public class UserServiceImpl implements UserService {
     public Optional<List<UpdateBookDTO>> checkoutWishlist(String username) throws NoCopiesAvailableException {
         User user = userRepository.findByUsername(username);
         List<Book> wishlist = user.getWishlist();
+        List<Book> booksToRemove = new ArrayList<>();
         List<UpdateBookDTO> pickedUpBooks = new ArrayList<>();
 
-        while (!wishlist.isEmpty()) {
+        for (Book b : wishlist) {
             try {
-                bookApplicationService.borrow(wishlist.getFirst().getId());
+                bookApplicationService.borrow(b.getId());
 
                 // if we get past this comment, we didn't throw an exception
-                wishlist.remove(wishlist.getFirst());
-                pickedUpBooks.add(UpdateBookDTO.from(wishlist.getFirst()));
+                booksToRemove.add(b);
+                pickedUpBooks.add(UpdateBookDTO.from(b));
             } catch (NoCopiesAvailableException _) {
 
-            } finally {
-                userRepository.save(user);
             }
-            return Optional.of(pickedUpBooks);
+
         }
 
-        return Optional.empty();
+        if (!pickedUpBooks.isEmpty()) {
+            wishlist.removeAll(booksToRemove);
+            userRepository.save(user);
+            return Optional.of(pickedUpBooks);
+        } else {
+            return Optional.empty();
+        }
+
+
     }
 
     @Override
