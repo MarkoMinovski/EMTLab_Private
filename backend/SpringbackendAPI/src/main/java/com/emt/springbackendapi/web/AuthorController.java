@@ -1,10 +1,12 @@
 package com.emt.springbackendapi.web;
 
 import com.emt.springbackendapi.model.domain.Author;
+import com.emt.springbackendapi.model.domain.AuthorsPerCountryMView;
 import com.emt.springbackendapi.model.domain.Country;
 import com.emt.springbackendapi.model.dto.AuthorDTO;
 import com.emt.springbackendapi.model.dto.UpdateAuthorDTO;
 import com.emt.springbackendapi.model.dto.UpdateCountryDTO;
+import com.emt.springbackendapi.service.AuthorsPerCountryService;
 import com.emt.springbackendapi.service.CountryService;
 import com.emt.springbackendapi.service.application.AuthorApplicationService;
 import com.emt.springbackendapi.service.application.CountryApplicationService;
@@ -25,11 +27,15 @@ import java.util.Optional;
 public class AuthorController {
 
     private final AuthorApplicationService authorService;
-    private final CountryApplicationService countryService;
+    private final CountryApplicationService countryApplicationService;
+    private final CountryService countryDomainService;
+    private final AuthorsPerCountryService authorsPerCountryService;
 
-    public AuthorController(AuthorApplicationService authorService, CountryApplicationService countryService) {
+    public AuthorController(AuthorApplicationService authorService, CountryApplicationService countryApplicationService, CountryService countryDomainService, AuthorsPerCountryService authorsPerCountryService) {
         this.authorService = authorService;
-        this.countryService = countryService;
+        this.countryApplicationService = countryApplicationService;
+        this.countryDomainService = countryDomainService;
+        this.authorsPerCountryService = authorsPerCountryService;
     }
 
     @Operation(summary = "Get all authors", description = "Retrieves a list of all authors.")
@@ -45,12 +51,11 @@ public class AuthorController {
     @ApiResponse(responseCode = "404", description = "Author not found")
     @PutMapping()
     private ResponseEntity<UpdateAuthorDTO> registerNewAuthor(@RequestBody AuthorDTO authorDTO) {
-        Optional<UpdateCountryDTO> c = this.countryService.findById(authorDTO.getCountry());
+        Optional<Country> c = this.countryDomainService.findById(authorDTO.getCountry());
+        Optional<UpdateAuthorDTO> updateAuthorDTOOptional
+                = this.authorService.create(authorDTO.getName(), authorDTO.getSurname(), c.get());
 
-        return c.map(country ->
-                this.authorService.create(authorDTO.getName(), authorDTO.getSurname(),
-                                country.toCountry()).map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build())).orElseGet(() -> ResponseEntity.notFound().build());
+        return updateAuthorDTOOptional.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     @Operation(summary = "Update an existing author", description = "Updates the details of an author by ID.")
@@ -59,14 +64,11 @@ public class AuthorController {
     @ApiResponse(responseCode = "404", description = "Author not found")
     @PostMapping("/update/{id}")
     private ResponseEntity<UpdateAuthorDTO> updateAuthor(@PathVariable Long id, @RequestBody AuthorDTO authorDTO) {
-        Optional<UpdateCountryDTO> c = this.countryService.findById(authorDTO.getCountry());
+        Optional<Country> c = this.countryDomainService.findById(authorDTO.getCountry());
+        Optional<UpdateAuthorDTO> updateAuthorDTOOptional = this.authorService.update(id, authorDTO.getName(),
+                authorDTO.getSurname(), c.get());
 
-        // Looks weird. It looks like it maps the "country" Optional, but it does actually correctly return
-        // a ResponseEntity of Author type
-        return c.map(country ->
-                this.authorService.update(id, authorDTO.getName(), authorDTO.getSurname(),
-                                country.toCountry()).map(ResponseEntity::ok)
-                        .orElse(ResponseEntity.notFound().build())).orElseGet(() -> ResponseEntity.notFound().build());
+        return updateAuthorDTOOptional.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     @Operation(summary = "Delete an author", description = "Deletes an author by ID.")
@@ -79,6 +81,24 @@ public class AuthorController {
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @Operation(summary = "Retrieve number of authors per country", description = "Given a country, returns the number" +
+            "of authors in the system from it. Uses a materialized view, so may be slightly out of date (query twice" +
+            "to guarantee result)")
+    @ApiResponse(responseCode = "200", description = "Country and numOfAuthors returned")
+    @ApiResponse(responseCode = "404", description = "Country not found")
+    @ApiResponse(responseCode = "401", description = "Sent bad request: multiple request parameters, etc...")
+    @GetMapping("/by-country")
+    private ResponseEntity<AuthorsPerCountryMView> getAuthorsByCountry(@RequestParam String countryName) {
+        Optional<AuthorsPerCountryMView> queryResult =
+                authorsPerCountryService.FindAuthorsPerCountryByCountryName(countryName);
+
+        if (queryResult.isPresent()) {
+            return queryResult.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+        }
+
+        return ResponseEntity.badRequest().build();
     }
 
 }

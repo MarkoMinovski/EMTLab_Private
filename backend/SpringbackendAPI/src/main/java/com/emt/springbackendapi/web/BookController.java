@@ -1,6 +1,7 @@
 package com.emt.springbackendapi.web;
 
 import com.emt.springbackendapi.model.domain.Author;
+import com.emt.springbackendapi.model.domain.BooksPerAuthorMView;
 import com.emt.springbackendapi.model.domain.Country;
 import com.emt.springbackendapi.model.domain.User;
 import com.emt.springbackendapi.model.dto.BookDTO;
@@ -9,6 +10,9 @@ import com.emt.springbackendapi.model.dto.UpdateBookDTO;
 import com.emt.springbackendapi.model.dto.UpdateCountryDTO;
 import com.emt.springbackendapi.model.enums.Category;
 import com.emt.springbackendapi.model.exception.NoCopiesAvailableException;
+import com.emt.springbackendapi.service.AuthorService;
+import com.emt.springbackendapi.service.BooksPerAuthorService;
+import com.emt.springbackendapi.service.CountryService;
 import com.emt.springbackendapi.service.UserService;
 import com.emt.springbackendapi.service.application.AuthorApplicationService;
 import com.emt.springbackendapi.service.application.BookApplicationService;
@@ -31,16 +35,17 @@ import java.util.Optional;
 @RequestMapping("/api/books")
 @Tag(name = "Book Controller", description = "APIs for managing books")
 public class BookController {
-    private final AuthorApplicationService authorService;
+    private final AuthorService authorDomainService;
     private final BookApplicationService bookService;
-    private final CountryApplicationService countryService;
     private final UserService userService;
+    private final BooksPerAuthorService booksPerAuthorService;
 
-    public BookController(AuthorApplicationService authorService, BookApplicationService bookService, CountryApplicationService countryService, UserService userService) {
-        this.authorService = authorService;
+    public BookController(AuthorService authorDomainService, BookApplicationService bookService,
+                          UserService userService, BooksPerAuthorService booksPerAuthorService) {
+        this.authorDomainService = authorDomainService;
         this.bookService = bookService;
-        this.countryService = countryService;
         this.userService = userService;
+        this.booksPerAuthorService = booksPerAuthorService;
     }
 
     @Operation(summary = "Get all books", description = "Fetches all available books.")
@@ -55,29 +60,36 @@ public class BookController {
     @Content(schema = @Schema(implementation = UpdateBookDTO.class)))
     @PutMapping()
     private ResponseEntity<UpdateBookDTO> registerNewBook(BookDTO bookDTO) {
-        UpdateAuthorDTO authorDTO = authorService.findById(bookDTO.getAuthor()).get();
-        UpdateCountryDTO countryDTO = this.countryService.findById(authorDTO.country()).get();
+        Optional<Author> authorOfBookToBeRegistered = this.authorDomainService.findById(bookDTO.getAuthor());
+        if (authorOfBookToBeRegistered.isPresent()) {
+            Optional<UpdateBookDTO> optionalUpdateBookDTOReturnValue = this.bookService.
+                    create(bookDTO.getName(), bookDTO.getCategory(), bookDTO.getAvailableCopies(),
+                    authorOfBookToBeRegistered.get());
 
-        Country countryInternal = countryDTO.toCountry();
-        Author authorInternal = authorDTO.toAuthor(countryInternal);
+            if (optionalUpdateBookDTOReturnValue.isPresent()) {
+                return optionalUpdateBookDTOReturnValue.map(ResponseEntity::ok).
+                        orElse(ResponseEntity.unprocessableEntity().build());
+            }
+        }
 
-        return this.bookService.create(bookDTO.getName(), bookDTO.getCategory(), bookDTO.getAvailableCopies(),
-                authorInternal).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.badRequest().build();
     }
 
     @Operation(summary = "Update a book", description = "Updates the details of an existing book.")
     @ApiResponse(responseCode = "200", description = "Book successfully updated", content = @Content(schema = @Schema(implementation = UpdateBookDTO.class)))
     @PostMapping("/update/{id}")
     private ResponseEntity<UpdateBookDTO> updateBook(@PathVariable Long id, @RequestBody BookDTO bookDTO) {
-        UpdateAuthorDTO targetDTO = this.authorService.findById(bookDTO.getAuthor()).get();
-        UpdateCountryDTO countryDTO = this.countryService.findById(targetDTO.country()).get();
+        Optional<Author> newAuthorValue = this.authorDomainService.findById(bookDTO.getAuthor());
 
-        Country countryInternal = countryDTO.toCountry();
-        Author targetAuthor = targetDTO.toAuthor(countryInternal);
+        if (newAuthorValue.isPresent()) {
+            Optional<UpdateBookDTO> updateBookDTOOptionalReturnValue = this.bookService.update(id,
+                    bookDTO.getName(), bookDTO.getCategory(), newAuthorValue.get());
 
-        return this.bookService
-                .update(id, bookDTO.getName(), bookDTO.getCategory(), targetAuthor).map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+            return updateBookDTOOptionalReturnValue.map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.unprocessableEntity().build());
+        }
+
+        return ResponseEntity.badRequest().build();
     }
 
     @Operation(summary = "Delete a book", description = "Removes a book by its ID.")
@@ -154,17 +166,18 @@ public class BookController {
         return this.bookService.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Get books by author", description = "Retrieves books written by a specific author.")
+    @Operation(summary = "Get number of books by author", description = "Retrieves books written by a specific author.")
     @ApiResponse(responseCode = "200", description = "List of books by author returned")
-    @GetMapping("/by-author/{authorId}")
-    private List<UpdateBookDTO> getBooksByAuthor(@PathVariable Long authorId) {
-        Optional<UpdateAuthorDTO> target = this.authorService.findById(authorId);
-        UpdateCountryDTO countryDTO = this.countryService.findById(target.get().country()).get();
+    @GetMapping("/by-author")
+    private ResponseEntity<BooksPerAuthorMView> getBooksByAuthor(@RequestParam(required = true) Long authorId) {
+        Optional<BooksPerAuthorMView> queryResult = this
+                .booksPerAuthorService.findBooksPerAuthorRecordByAuthorId(authorId);
 
-        Country countryInternal = countryDTO.toCountry();
-        Author targetInternal = target.get().toAuthor(countryInternal);
+        if (queryResult.isPresent()) {
+            return queryResult.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+        }
 
-        return this.bookService.getBooksByAuthor(targetInternal);
+        return ResponseEntity.badRequest().build();
     }
 
     @Operation(summary = "Get books by category", description = "Retrieves books belonging to a specific category.")

@@ -1,0 +1,27 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:17.4
+    container_name: p_db
+    restart: always
+    environment:
+      POSTGRES_DB: library_db
+      POSTGRES_USER: librarian_admin
+      POSTGRES_PASSWORD: library_pass
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready", "-d", "db_prod" ]
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 80s
+    ports:
+      - "2345:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./views.sql:/docker-entrypoint-initdb.d/views.sql
+
+
+volumes:
+  pgdata:

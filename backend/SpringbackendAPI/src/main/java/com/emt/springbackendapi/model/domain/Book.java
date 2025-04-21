@@ -17,7 +17,6 @@ public class Book {
     private Long id;
     private String name;
     private Category category;
-
     @ManyToOne
     @OnDelete(action = OnDeleteAction.SET_NULL)
     private Author author;

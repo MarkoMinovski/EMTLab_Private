@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
                 // if we get past this comment, we didn't throw an exception
                 booksToRemove.add(b);
                 pickedUpBooks.add(UpdateBookDTO.from(b));
-            } catch (NoCopiesAvailableException _) {
+            } catch (NoCopiesAvailableException ignored) {
 
             }
 
