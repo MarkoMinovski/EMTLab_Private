@@ -6,6 +6,7 @@ import com.emt.springbackendapi.model.domain.Country;
 import com.emt.springbackendapi.model.dto.AuthorDTO;
 import com.emt.springbackendapi.model.dto.UpdateAuthorDTO;
 import com.emt.springbackendapi.model.dto.UpdateCountryDTO;
+import com.emt.springbackendapi.model.projections.AuthorFirstLastNameProjection;
 import com.emt.springbackendapi.service.AuthorsPerCountryService;
 import com.emt.springbackendapi.service.CountryService;
 import com.emt.springbackendapi.service.application.AuthorApplicationService;
@@ -23,7 +24,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/authors")
-@Tag(name = "Author Controller", description = "APIs for managing authors")
+@Tag(name = "Author Controller", description = "Endpoints for Author CRUD, filtering and more.")
 public class AuthorController {
 
     private final AuthorApplicationService authorService;
@@ -90,7 +91,11 @@ public class AuthorController {
     @ApiResponse(responseCode = "404", description = "Country not found")
     @ApiResponse(responseCode = "401", description = "Sent bad request: multiple request parameters, etc...")
     @GetMapping("/by-country")
-    private ResponseEntity<AuthorsPerCountryMView> getAuthorsByCountry(@RequestParam String countryName) {
+    private ResponseEntity<AuthorsPerCountryMView> getAuthorsByCountry(@RequestParam
+                                                                           String countryName) {
+
+
+
         Optional<AuthorsPerCountryMView> queryResult =
                 authorsPerCountryService.FindAuthorsPerCountryByCountryName(countryName);
 
@@ -99,6 +104,19 @@ public class AuthorController {
         }
 
         return ResponseEntity.badRequest().build();
+    }
+
+    @Operation(summary = "Retrieve number of authors per country", description = "Return all countries and the number" +
+            "of authors from each respective country in the system")
+    @ApiResponse(responseCode = "200", description = "Result returned")
+    @GetMapping("/by-country/all")
+    private List<AuthorsPerCountryMView> getAuthorsByCountryForAll() {
+        return this.authorsPerCountryService.findAll();
+    }
+
+    @GetMapping("/names-surnames")
+    private List<AuthorFirstLastNameProjection> authorFirstLastNameProjectionList() {
+        return this.authorService.getAuthorsFirstAndLastNames();
     }
 
 }

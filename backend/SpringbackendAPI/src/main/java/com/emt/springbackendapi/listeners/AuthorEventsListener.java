@@ -17,16 +17,19 @@ public class AuthorEventsListener {
 
     @EventListener
     public void onAuthorCreated(AuthorCreatedEvent e) {
+        System.out.println("Refreshing M-View AuthorsPerCountry from onAuthorCreated event");
         this.authorService.refreshMaterializedView();
     }
 
     @EventListener
     public void onAuthorRemoved(AuthorRemovedEvent e) {
+        System.out.println("Refreshing M-View AuthorsPerCountry from onAuthorRemoved event");
         this.authorService.refreshMaterializedView();
     }
 
     @EventListener
     public void onAuthorUpdated(AuthorUpdatedEvent e) {
+        System.out.println("Refreshing M-View AuthorsPerCountry from onAuthorUpdated event");
         this.authorService.refreshMaterializedView();
     }
 }

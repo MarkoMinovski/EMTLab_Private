@@ -17,7 +17,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
-@Tag(name = "User API", description = "Endpoints for user authentication and registration")
+@Tag(name = "User Controller", description = "Endpoints for user authentication, registration and info")
 public class UserController {
 
     private final UserService userApplicationService;
@@ -72,5 +72,19 @@ public class UserController {
         request.getSession().invalidate();
     }
 
+    @Operation(summary = "Load user info", description = "Loads basic info for a user in the system")
+    @ApiResponse(responseCode = "200", description = "Info returned successfully")
+    @ApiResponse(responseCode = "404", description = "User not found")
+    @ApiResponse(responseCode = "401", description = "Client sent bad request")
+    @GetMapping("/get-basic-info")
+    public ResponseEntity<User> loadUserInfo(String username) {
+        Optional<User> userInfo = this.userApplicationService.findBasicUserInfoByUsername(username);
+
+        if (userInfo.isPresent()) {
+            return userInfo.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+        }
+
+        return ResponseEntity.badRequest().build();
+    }
 
 }

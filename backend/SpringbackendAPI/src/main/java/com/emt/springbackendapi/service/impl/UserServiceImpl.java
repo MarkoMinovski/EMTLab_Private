@@ -81,8 +81,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<User> findBasicUserInfoByUsername(String username) {
+        return Optional.ofNullable(userRepository.findBasicInfoByUsername(username));
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // ??? it's the same thing
         return userRepository.findByUsername(username);
     }
 

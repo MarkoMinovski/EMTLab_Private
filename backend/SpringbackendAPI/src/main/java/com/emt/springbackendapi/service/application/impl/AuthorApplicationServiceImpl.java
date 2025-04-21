@@ -6,6 +6,7 @@ import com.emt.springbackendapi.events.AuthorUpdatedEvent;
 import com.emt.springbackendapi.model.domain.Author;
 import com.emt.springbackendapi.model.domain.Country;
 import com.emt.springbackendapi.model.dto.UpdateAuthorDTO;
+import com.emt.springbackendapi.model.projections.AuthorFirstLastNameProjection;
 import com.emt.springbackendapi.repository.AuthorRepository;
 import com.emt.springbackendapi.service.application.AuthorApplicationService;
 import org.springframework.context.ApplicationEventPublisher;
@@ -64,5 +65,10 @@ public class AuthorApplicationServiceImpl implements AuthorApplicationService {
         Author target = authorRepository.findById(id).get();
         applicationEventPublisher.publishEvent(new AuthorRemovedEvent(target));
         authorRepository.delete(target);
+    }
+
+    @Override
+    public List<AuthorFirstLastNameProjection> getAuthorsFirstAndLastNames() {
+        return this.authorRepository.getFirstAndLastNamesOfAuthors();
     }
 }

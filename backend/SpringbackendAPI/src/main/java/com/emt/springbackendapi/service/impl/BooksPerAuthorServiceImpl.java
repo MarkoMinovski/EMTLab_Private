@@ -24,7 +24,7 @@ public class BooksPerAuthorServiceImpl implements BooksPerAuthorService {
 
     @Override
     public void refreshMaterializedView() {
-        System.out.print("Refreshing materialized View from inside service\n");
+        System.out.println("Refreshing materialized View from inside service");
         booksPerAuthorRepository.refreshMaterializedView();
     }
 

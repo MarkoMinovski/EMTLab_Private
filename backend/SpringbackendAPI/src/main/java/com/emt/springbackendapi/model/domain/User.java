@@ -17,6 +17,17 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "library_users")
+@NamedEntityGraph(
+        name = "user.basic",
+        attributeNodes = {
+                @NamedAttributeNode("id"),
+                @NamedAttributeNode("username"),
+                @NamedAttributeNode("isAccountNonExpired"),
+                @NamedAttributeNode("isAccountNonLocked"),
+                @NamedAttributeNode("isCredentialsNonExpired"),
+                @NamedAttributeNode("isEnabled")
+        }
+)
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/country")
-@Tag(name = "Country Controller", description = "API for managing the country entity (table) in the database")
+@Tag(name = "Country Controller", description = "Endpoints for managing Country CRUD, filtering, and more.")
 public class CountryController {
 
     private final CountryApplicationService countryService;

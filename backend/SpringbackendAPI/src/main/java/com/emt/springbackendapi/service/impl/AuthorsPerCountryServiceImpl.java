@@ -5,6 +5,7 @@ import com.emt.springbackendapi.repository.AuthorsPerCountryRepository;
 import com.emt.springbackendapi.service.AuthorsPerCountryService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,4 +26,11 @@ public class AuthorsPerCountryServiceImpl implements AuthorsPerCountryService {
     public void refreshMaterializedView() {
         authorsPerCountryRepository.refreshMaterializedView();
     }
+
+    @Override
+    public List<AuthorsPerCountryMView> findAll() {
+        return authorsPerCountryRepository.findAll();
+    }
+
+
 }

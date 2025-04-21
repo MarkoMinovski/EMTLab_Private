@@ -17,4 +17,6 @@ public interface UserService extends UserDetailsService {
     Optional<User> findByUsername(String username);
 
     Optional<List<UpdateBookDTO>> checkoutWishlist(String username) throws NoCopiesAvailableException;
+
+    Optional<User> findBasicUserInfoByUsername(String username);
 }

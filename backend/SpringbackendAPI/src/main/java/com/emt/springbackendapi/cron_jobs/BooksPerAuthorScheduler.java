@@ -5,11 +5,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TaskScheduler {
+public class BooksPerAuthorScheduler {
 
     private final BooksPerAuthorService booksPerAuthorService;
 
-    public TaskScheduler(BooksPerAuthorService booksPerAuthorService) {
+    public BooksPerAuthorScheduler(BooksPerAuthorService booksPerAuthorService) {
         this.booksPerAuthorService = booksPerAuthorService;
     }
 

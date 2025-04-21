@@ -33,7 +33,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/books")
-@Tag(name = "Book Controller", description = "APIs for managing books")
+@Tag(name = "Book Controller", description = "Endpoints for Book CRUD, filtering and more.")
 public class BookController {
     private final AuthorService authorDomainService;
     private final BookApplicationService bookService;
@@ -166,10 +166,11 @@ public class BookController {
         return this.bookService.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Get number of books by author", description = "Retrieves books written by a specific author.")
-    @ApiResponse(responseCode = "200", description = "List of books by author returned")
+    @Operation(summary = "Get number of books by author", description = "Retrieves number of " +
+            "books written by a specific author.")
+    @ApiResponse(responseCode = "200", description = "Number of books by author returned")
     @GetMapping("/by-author")
-    private ResponseEntity<BooksPerAuthorMView> getBooksByAuthor(@RequestParam(required = true) Long authorId) {
+    private ResponseEntity<BooksPerAuthorMView> getBooksByAuthor(@RequestParam Long authorId) {
         Optional<BooksPerAuthorMView> queryResult = this
                 .booksPerAuthorService.findBooksPerAuthorRecordByAuthorId(authorId);
 
@@ -178,6 +179,11 @@ public class BookController {
         }
 
         return ResponseEntity.badRequest().build();
+    }
+
+    @GetMapping("/by-author/all")
+    private List<BooksPerAuthorMView> getBooksPerAuthorAll() {
+        return this.booksPerAuthorService.findAll();
     }
 
     @Operation(summary = "Get books by category", description = "Retrieves books belonging to a specific category.")
