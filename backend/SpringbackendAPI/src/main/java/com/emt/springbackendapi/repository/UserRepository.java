@@ -5,11 +5,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.emt.springbackendapi.model.domain.User;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    User findByUsernameAndPassword(String username, String password);
 
-    User findByUsername(String username);
+    Optional<User> findByUsername(String username);
 
     @EntityGraph("user.basic")
     User findBasicInfoByUsername(String username);

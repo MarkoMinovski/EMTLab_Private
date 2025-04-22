@@ -1,6 +1,7 @@
 package com.emt.springbackendapi.web;
 
 import com.emt.springbackendapi.model.domain.User;
+import com.emt.springbackendapi.model.dto.LoginResponseDTO;
 import com.emt.springbackendapi.model.dto.UserDTO;
 import com.emt.springbackendapi.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,7 +45,7 @@ public class UserController {
                 );
     }
 
-    @Operation(summary = "User login", description = "Authenticates a user and starts a session")
+    @Operation(summary = "User login", description = "Authenticates a user and returns a JWT")
     @ApiResponses(
             value = {@ApiResponse(
                     responseCode = "200",
@@ -52,25 +53,26 @@ public class UserController {
             ), @ApiResponse(responseCode = "404", description = "Invalid username or password")}
     )
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UserDTO userDTO, HttpServletRequest request) {
-        Optional<User> user = this.userApplicationService.login(userDTO.username(), userDTO.password());
+    public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
+        Optional<LoginResponseDTO> user = this.userApplicationService.loginAndReturnJwt(userDTO);
 
         if (user.isPresent()) {
-            request.getSession().setAttribute("user", user.get());
             return ResponseEntity.ok(user.get());
         }
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(Map.of("error", "Invalid username or password", "status", 401));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "Unspecified Internal Server Error", "status", 500));
     }
 
 
+    /*
     @Operation(summary = "User logout", description = "Ends the user's session")
     @ApiResponse(responseCode = "200", description = "User logged out successfully")
     @GetMapping("/logout")
     public void logout(HttpServletRequest request) {
         request.getSession().invalidate();
     }
+    */
 
     @Operation(summary = "Load user info", description = "Loads basic info for a user in the system")
     @ApiResponse(responseCode = "200", description = "Info returned successfully")

@@ -2,10 +2,15 @@ package com.emt.springbackendapi.service.impl;
 
 import com.emt.springbackendapi.model.domain.Book;
 import com.emt.springbackendapi.model.domain.User;
+import com.emt.springbackendapi.model.dto.LoginResponseDTO;
 import com.emt.springbackendapi.model.dto.UpdateBookDTO;
+import com.emt.springbackendapi.model.dto.UserDTO;
 import com.emt.springbackendapi.model.enums.Role;
+import com.emt.springbackendapi.model.exception.InvalidArgumentsException;
+import com.emt.springbackendapi.model.exception.InvalidUserCredentialsException;
 import com.emt.springbackendapi.model.exception.NoCopiesAvailableException;
 import com.emt.springbackendapi.repository.UserRepository;
+import com.emt.springbackendapi.security.JWTHelper;
 import com.emt.springbackendapi.service.UserService;
 import com.emt.springbackendapi.service.application.impl.BookApplicationServiceImpl;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,12 +29,14 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final BookApplicationServiceImpl bookApplicationService;
     private final PasswordEncoder passwordEncoder;
+    private final JWTHelper jwtHelper;
 
     public UserServiceImpl(UserRepository userRepository, BookApplicationServiceImpl bookApplicationService,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder, JWTHelper jwtHelper) {
         this.userRepository = userRepository;
         this.bookApplicationService = bookApplicationService;
         this.passwordEncoder = passwordEncoder;
+        this.jwtHelper = jwtHelper;
     }
 
     @Override
@@ -40,19 +47,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> login(String username, String password) {
-        return Optional.ofNullable(userRepository.findByUsernameAndPassword(username, password));
+    public Optional<User> loginInternal(String username, String password) {
+        if (username == null || username.isEmpty() || password == null || password.isEmpty())
+            throw new InvalidArgumentsException();
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User doesn't exist"));
+        if (!passwordEncoder.matches(password, user.getPassword()))
+            throw new InvalidUserCredentialsException();
+        return Optional.of(user);
     }
 
     @Override
     public Optional<User> findByUsername(String username) {
-        return Optional.ofNullable(userRepository.findByUsername(username));
+        return userRepository.findByUsername(username);
     }
 
     @Override
     public Optional<List<UpdateBookDTO>> checkoutWishlist(String username) throws NoCopiesAvailableException {
-        User user = userRepository.findByUsername(username);
-        List<Book> wishlist = user.getWishlist();
+        Optional<User> user = userRepository.findByUsername(username);
+        List<Book> wishlist = user.get().getWishlist();
         List<Book> booksToRemove = new ArrayList<>();
         List<UpdateBookDTO> pickedUpBooks = new ArrayList<>();
 
@@ -71,7 +83,7 @@ public class UserServiceImpl implements UserService {
 
         if (!pickedUpBooks.isEmpty()) {
             wishlist.removeAll(booksToRemove);
-            userRepository.save(user);
+            userRepository.save(user.get());
             return Optional.of(pickedUpBooks);
         } else {
             return Optional.empty();
@@ -87,8 +99,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username);
+        return userRepository.findByUsername(username).get();
     }
 
+    public Optional<LoginResponseDTO> loginAndReturnJwt(UserDTO userDTO) {
+        Optional<User> user = this.loginInternal(userDTO.username(), userDTO.password());
+
+        if (user.isPresent()) {
+            String token = jwtHelper.generateToken(user.get());
+
+            return Optional.of(new LoginResponseDTO(token));
+        }
+
+        return Optional.empty();
+    };
 
 }
