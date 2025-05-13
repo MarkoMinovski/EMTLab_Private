@@ -4,10 +4,12 @@ import com.emt.springbackendapi.events.AuthorCreatedEvent;
 import com.emt.springbackendapi.events.AuthorRemovedEvent;
 import com.emt.springbackendapi.events.AuthorUpdatedEvent;
 import com.emt.springbackendapi.service.AuthorsPerCountryService;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile("psql")
 public class AuthorEventsListener {
     private final AuthorsPerCountryService authorService;
 

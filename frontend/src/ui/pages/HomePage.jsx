@@ -11,25 +11,29 @@ const HomePage = () => {
       <Box sx={{ flexGrow: 1 }}>
           <Container maxwidth="xl" sx={{ textAlign: "center" }}>
 
-              <Typography variant="h2" sx={{ mt: 2}}>
+              <Typography variant="h2" sx={{ mt: 2, color: "#FFFFFF"}}>
                   MyLibrary
               </Typography>
-              <Typography variant="h6" sx={{ m: 4 }}>
+              <Typography variant="h6" sx={{ m: 4, color: "#FFFFFF" }}>
                   The largest E-Library in Macedonia
               </Typography>
               <hr/>
 
               <Grid container spacing={2}>
                   <Grid size={4}>
-                      <HomePageCard></HomePageCard>
+                      <HomePageCard type={"country"}></HomePageCard>
                   </Grid>
                   <Grid size={4}>
-                      <HomePageCard></HomePageCard>
+                      <HomePageCard type={"author"}></HomePageCard>
                   </Grid>
                   <Grid size={4}>
-                      <HomePageCard></HomePageCard>
+                      <HomePageCard type={"book"}></HomePageCard>
                   </Grid>
               </Grid>
+
+              <Typography variant="h2" sx={{ mt: 6, color: "#FFFFFF" }}>
+                  Join us today.
+              </Typography>
           </Container>
       </Box>
   )

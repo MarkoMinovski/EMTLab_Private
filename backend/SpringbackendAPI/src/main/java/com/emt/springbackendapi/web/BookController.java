@@ -38,14 +38,12 @@ public class BookController {
     private final AuthorService authorDomainService;
     private final BookApplicationService bookService;
     private final UserService userService;
-    private final BooksPerAuthorService booksPerAuthorService;
 
     public BookController(AuthorService authorDomainService, BookApplicationService bookService,
-                          UserService userService, BooksPerAuthorService booksPerAuthorService) {
+                          UserService userService) {
         this.authorDomainService = authorDomainService;
         this.bookService = bookService;
         this.userService = userService;
-        this.booksPerAuthorService = booksPerAuthorService;
     }
 
     @Operation(summary = "Get all books", description = "Fetches all available books.")
@@ -166,7 +164,7 @@ public class BookController {
         return this.bookService.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Get number of books by author", description = "Retrieves number of " +
+    /*@Operation(summary = "Get number of books by author", description = "Retrieves number of " +
             "books written by a specific author.")
     @ApiResponse(responseCode = "200", description = "Number of books by author returned")
     @GetMapping("/by-author")
@@ -191,6 +189,6 @@ public class BookController {
     @GetMapping("/by-category/{categoryType}")
     private List<UpdateBookDTO> getBooksByCategory(@PathVariable Category categoryType) {
         return this.bookService.getBooksByCategory(categoryType);
-    }
+    }*/
 
 }

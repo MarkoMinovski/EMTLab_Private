@@ -26,7 +26,7 @@ public class DataInitializer {
     @PostConstruct
     public void init() {
 
-        /*if (countryService.findAll().isEmpty()) {
+        if (countryService.findAll().isEmpty()) {
             countryService.create("France", "Europe");
             countryService.create("Japan", "Asia");
             countryService.create("Brazil", "South America");
@@ -56,7 +56,7 @@ public class DataInitializer {
             bookService.create("Faust", Category.HISTORICAL, 6, authorService.findById(5L).get());
             bookService.create("Malgudi Days", Category.BIOGRAPHY, 4, authorService.findById(6L).get());
             bookService.create("L'etranger", Category.CLASSICS, 9, authorService.findById(7L).get());
-        }*/
+        }
 
         if (userService.findByUsername("admin").isEmpty()) {
             userService.register("admin", "abcd", "abcd", Role.ROLE_LIBRARIAN);

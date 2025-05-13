@@ -30,13 +30,12 @@ public class AuthorController {
     private final AuthorApplicationService authorService;
     private final CountryApplicationService countryApplicationService;
     private final CountryService countryDomainService;
-    private final AuthorsPerCountryService authorsPerCountryService;
 
-    public AuthorController(AuthorApplicationService authorService, CountryApplicationService countryApplicationService, CountryService countryDomainService, AuthorsPerCountryService authorsPerCountryService) {
+    public AuthorController(AuthorApplicationService authorService, CountryApplicationService countryApplicationService,
+                            CountryService countryDomainService) {
         this.authorService = authorService;
         this.countryApplicationService = countryApplicationService;
         this.countryDomainService = countryDomainService;
-        this.authorsPerCountryService = authorsPerCountryService;
     }
 
     @Operation(summary = "Get all authors", description = "Retrieves a list of all authors.")
@@ -84,7 +83,7 @@ public class AuthorController {
         return ResponseEntity.notFound().build();
     }
 
-    @Operation(summary = "Retrieve number of authors per country", description = "Given a country, returns the number" +
+    /*@Operation(summary = "Retrieve number of authors per country", description = "Given a country, returns the number" +
             "of authors in the system from it. Uses a materialized view, so may be slightly out of date (query twice" +
             "to guarantee result)")
     @ApiResponse(responseCode = "200", description = "Country and numOfAuthors returned")
@@ -104,9 +103,9 @@ public class AuthorController {
         }
 
         return ResponseEntity.badRequest().build();
-    }
+    }*/
 
-    @Operation(summary = "Retrieve number of authors per country", description = "Return all countries and the number" +
+    /*@Operation(summary = "Retrieve number of authors per country", description = "Return all countries and the number" +
             "of authors from each respective country in the system")
     @ApiResponse(responseCode = "200", description = "Result returned")
     @GetMapping("/by-country/all")
@@ -117,6 +116,6 @@ public class AuthorController {
     @GetMapping("/names-surnames")
     private List<AuthorFirstLastNameProjection> authorFirstLastNameProjectionList() {
         return this.authorService.getAuthorsFirstAndLastNames();
-    }
+    }*/
 
 }

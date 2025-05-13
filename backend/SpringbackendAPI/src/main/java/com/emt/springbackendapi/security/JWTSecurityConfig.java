@@ -17,7 +17,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-@Profile("psql")
+
 @Configuration
 @EnableWebSecurity
 public class JWTSecurityConfig {

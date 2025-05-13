@@ -1,10 +1,12 @@
 package com.emt.springbackendapi.cron_jobs;
 
 import com.emt.springbackendapi.service.BooksPerAuthorService;
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile("psql")
 public class BooksPerAuthorScheduler {
 
     private final BooksPerAuthorService booksPerAuthorService;

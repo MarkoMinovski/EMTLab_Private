@@ -1,6 +1,7 @@
 package com.emt.springbackendapi.repository;
 
 import com.emt.springbackendapi.model.domain.AuthorsPerCountryMView;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Repository
+@Profile("psql")
 public interface AuthorsPerCountryRepository extends JpaRepository<AuthorsPerCountryMView, String> {
     Optional<AuthorsPerCountryMView> findAuthorsPerCountryMViewByCountryName(String countryName);
 

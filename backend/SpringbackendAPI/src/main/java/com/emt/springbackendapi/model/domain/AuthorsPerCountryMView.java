@@ -6,11 +6,13 @@ import jakarta.persistence.Id;
 import lombok.Data;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Subselect;
+import org.springframework.context.annotation.Profile;
 
 @Immutable
 @Data
 @Entity
 @Subselect("SELECT * FROM public.authors_per_country")
+@Profile("psql")
 public class AuthorsPerCountryMView {
 
     @Id
