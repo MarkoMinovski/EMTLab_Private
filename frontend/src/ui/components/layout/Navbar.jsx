@@ -7,6 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
+import {Link as ReactRouterLink} from 'react-router-dom';
 
 const NavBar = () => {
     return (
@@ -16,12 +17,14 @@ const NavBar = () => {
 
                     {/* Title */}
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        <Link href="#" color="inherit" underline="none">EMTLabs - MyLibrary</Link>
+                        <Link to="/" color="inherit" underline="none">EMTLabs - MyLibrary</Link>
                     </Typography>
 
                     {/* Navigation Buttons */}
-                    <Button color="inherit">
-                        <Link href="#" color="inherit" underline="none">Countries</Link>
+                    <Button>
+                        <ReactRouterLink to="/countries" style={{ textDecoration: 'none', color: "#FFFFFF" }}>
+                            Countries
+                        </ReactRouterLink>
                     </Button>
                     <Button color="inherit">
                         <Link href="#" color="inherit" underline="none">Authors</Link>

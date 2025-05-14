@@ -50,6 +50,12 @@ public class CountryController {
         return this.countryService.findAll();
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<UpdateCountryDTO> getCountry(@PathVariable Long id) {
+        return this.countryService.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+
+
     @Operation(summary = "Add a country", description = "Creates a new country entry.")
     @ApiResponse(responseCode = "200", description = "Country successfully added",
             content = @Content(schema = @Schema(implementation = UpdateCountryDTO.class)))
