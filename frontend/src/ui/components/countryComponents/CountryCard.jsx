@@ -5,8 +5,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import {Box, Button, Card, CardActions, CardContent, Typography} from "@mui/material";
 import EditCountryDialog from "./EditCountryDialog.jsx";
 import DeleteCountryDialog from "./DeleteCountryDialog.jsx";
+import {useNavigate} from "react-router";
 
 const CountryCard = ({country, onEdit, onDelete}) => {
+    const navigate = useNavigate();
     const [EditCountryDialogOpen, setEditCountryDialogOpen] = useState(false);
     const [deleteCountryDialogOpen, setDeleteCountryDialogOpen] = useState(false);
 
@@ -23,7 +25,8 @@ const CountryCard = ({country, onEdit, onDelete}) => {
                                 sx={{textAlign: "right", fontSize: "1.25rem"}}>{country.continent}</Typography>
                 </CardContent>
                 <CardActions sx={{justifyContent: "space-between"}}>
-                    <Button size="small" color="info" startIcon={<InfoIcon/>}>
+                    <Button size="small" color="info" startIcon={<InfoIcon/>}
+                            onClick={() => navigate(`/countries/${country.id}`)}>
                         Info
                     </Button>
                     <Box>

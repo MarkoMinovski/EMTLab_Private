@@ -10,8 +10,9 @@ const useCountryDetails = (id) => {
     useEffect(() => {
         countryRepository
             .findById(id).then((resp) => {
-                setState(prevState => ({...prevState, "name": resp.name,
-                    "continent": resp.continent}));
+                console.log(resp);
+                setState(prevState => ({...prevState, "name": resp.data.name,
+                    "continent": resp.data.continent}));
         })
     }, [id])
 
