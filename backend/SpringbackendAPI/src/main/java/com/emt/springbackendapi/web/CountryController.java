@@ -1,6 +1,7 @@
 package com.emt.springbackendapi.web;
 
 import com.emt.springbackendapi.model.domain.Country;
+import com.emt.springbackendapi.model.dto.CreateCountryDTO;
 import com.emt.springbackendapi.model.dto.UpdateCountryDTO;
 import com.emt.springbackendapi.service.application.CountryApplicationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -60,8 +61,9 @@ public class CountryController {
     @ApiResponse(responseCode = "200", description = "Country successfully added",
             content = @Content(schema = @Schema(implementation = UpdateCountryDTO.class)))
     @PutMapping("/add")
-    public ResponseEntity<UpdateCountryDTO> addCountry(String name, String continent) {
-        return this.countryService.create(name, continent).map(ResponseEntity::ok).orElse(ResponseEntity.ok().build());
+    public ResponseEntity<UpdateCountryDTO> addCountry(@RequestBody CreateCountryDTO countryDTO) {
+        System.out.print(countryDTO);
+        return this.countryService.create(countryDTO.name(), countryDTO.continent()).map(ResponseEntity::ok).orElse(ResponseEntity.ok().build());
     }
 
     @Operation(summary = "Update a country", description = "Updates the details of an existing country.")

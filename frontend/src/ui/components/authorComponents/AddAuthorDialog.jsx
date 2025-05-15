@@ -5,16 +5,24 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
+    FormControl,
+    InputLabel, MenuItem, Select,
     TextField
 } from "@mui/material";
+import useCountries from "../../../hooks/useCountries.js";
 
 const initialFormData = {
     "name": "",
-    "continent": "",
+    "surname": "",
+    "country": null,
 };
 
-const AddCountryDialog = ({open, onClose, onAdd}) => {
+
+
+const AddAuthorDialog = ({open, onClose, onAdd}) => {
     const [formData, setFormData] = useState(initialFormData);
+    const {countries} = useCountries();
+    console.log(countries);
 
     const handleChange = (event) => {
         const {name, value} = event.target;
@@ -27,9 +35,10 @@ const AddCountryDialog = ({open, onClose, onAdd}) => {
         onClose();
     };
 
+
     return (
         <Dialog open={open} onClose={onClose}>
-            <DialogTitle>Add Country</DialogTitle>
+            <DialogTitle>Add Author</DialogTitle>
             <DialogContent>
                 <TextField
                     margin="dense"
@@ -41,12 +50,25 @@ const AddCountryDialog = ({open, onClose, onAdd}) => {
                 />
                 <TextField
                     margin="dense"
-                    label="Continent"
-                    name="continent"
-                    value={formData.continent}
+                    label="Surname"
+                    name="surname"
+                    value={formData.surname}
                     onChange={handleChange}
                     fullWidth
                 />
+                <FormControl fullWidth margin="dense">
+                    <InputLabel>Country</InputLabel>
+                    <Select
+                        name="country"
+                        value={formData.country}
+                        onChange={handleChange}
+                        label="Country"
+                        variant="outlined">
+                        {countries.map((country) => (
+                            <MenuItem key={country.id} value={country.id}>{country.name}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose}>Cancel</Button>
@@ -54,6 +76,7 @@ const AddCountryDialog = ({open, onClose, onAdd}) => {
             </DialogActions>
         </Dialog>
     );
-};
 
-export default AddCountryDialog;
+}
+
+export default AddAuthorDialog;

@@ -17,7 +17,9 @@ const NavBar = () => {
 
                     {/* Title */}
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        <Link to="/" color="inherit" underline="none">EMTLabs - MyLibrary</Link>
+                        <ReactRouterLink to="/" style={{ textDecoration: 'none', color: "#FFFFFF" }}>
+                            MyLibrary
+                        </ReactRouterLink>
                     </Typography>
 
                     {/* Navigation Buttons */}
@@ -26,11 +28,15 @@ const NavBar = () => {
                             Countries
                         </ReactRouterLink>
                     </Button>
-                    <Button color="inherit">
-                        <Link href="#" color="inherit" underline="none">Authors</Link>
+                    <Button>
+                        <ReactRouterLink to="/authors" style={{ textDecoration: 'none', color: "#FFFFFF" }}>
+                            Authors
+                        </ReactRouterLink>
                     </Button>
-                    <Button color="inherit">
-                        <Link href="#" color="inherit" underline="none">Books</Link>
+                    <Button>
+                        <ReactRouterLink to="/books" style={{ textDecoration: 'none', color: "#FFFFFF" }}>
+                            Books
+                        </ReactRouterLink>
                     </Button>
 
                 </Toolbar>

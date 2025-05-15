@@ -12,12 +12,15 @@ const countryRepository = {
         return await axiosInstance.get(`/country/${id}`);
     },
     add: async (data) => {
-        return await axiosInstance.post("/country/add", data);
+        await authenticate();
+        return await axiosInstance.put("/country/add", data);
     },
     edit: async (id, data) => {
+        await authenticate();
         return await axiosInstance.post(`/country/update/${id}`, data);
     },
     delete: async (id) => {
+        await authenticate();
         return await axiosInstance.delete(`/country/delete/${id}`);
     },
 

@@ -3,27 +3,35 @@ import {useNavigate, useParams} from "react-router";
 import {
     Box,
     Button,
+    Chip,
     CircularProgress,
     Grid,
     Typography,
     Paper,
     Avatar,
+    Stack,
+    Rating,
     Breadcrumbs,
     Link
 } from "@mui/material";
 import {
-    ArrowBack
+    ArrowBack,
+    Category,
+    Factory,
+    Star,
+    ShoppingCart,
+    FavoriteBorder,
+    Share, FlagCircle, Public
 } from "@mui/icons-material";
-import useCountryDetails from "../../../hooks/UseCountryDetails.js";
 
+import UseAuthorDetails from "../../../hooks/UseAuthorDetails.js";
 
-
-const CountryDetails = () => {
+const AuthorDetails = () => {
     const navigate = useNavigate();
     const {id} = useParams();
-    const {name, continent} = useCountryDetails(id);
+    const {author, country} = UseAuthorDetails(id);
 
-    if (!name || !continent) {
+    if (!author || !country) {
         return (
             <Box sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh'}}>
                 <CircularProgress/>
@@ -40,12 +48,12 @@ const CountryDetails = () => {
                     href="#"
                     onClick={(e) => {
                         e.preventDefault();
-                        navigate("/countries");
+                        navigate("/authors");
                     }}
                 >
-                    Countries
+                    Authors
                 </Link>
-                <Typography color="text.primary">{name}</Typography>
+                <Typography color="text.primary">{author.id}</Typography>
             </Breadcrumbs>
 
             <Paper elevation={2} sx={{p: 4, borderRadius: 4}}>
@@ -61,7 +69,7 @@ const CountryDetails = () => {
                             boxShadow: 1
                         }}>
                             <Avatar
-                                src={"/placeholder-country.jpg"}
+                                src={"/placeholder-product.jpg"}
                                 variant="rounded"
                                 sx={{
                                     width: '100%',
@@ -74,7 +82,7 @@ const CountryDetails = () => {
                     <Grid size={{xs: 12, md: 9}}>
                         <Box sx={{mb: 3}}>
                             <Typography variant="h3" gutterBottom sx={{fontWeight: 600}}>
-                                {name}
+                                {author.name} {author.surname}
                             </Typography>
 
 
@@ -86,19 +94,39 @@ const CountryDetails = () => {
                                 eaque obcaecati quasi, quo vitae.
                             </Typography>
 
-                            <Typography variant="h6">
-                                {continent}
-                            </Typography>
-
+                            <Stack direction="row" spacing={1} sx={{mb: 3}}>
+                                <Chip
+                                    icon={<FlagCircle/>}
+                                    label={country.name}
+                                    color="primary"
+                                    variant="outlined"
+                                    sx={{p: 2}}
+                                />
+                                <Chip
+                                    icon={<Public/>}
+                                    label={country.continent}
+                                    color="primary"
+                                    variant="outlined"
+                                    sx={{p: 2}}
+                                />
+                            </Stack>
                         </Box>
                     </Grid>
                     <Grid size={12} display="flex" justifyContent="space-between">
+                        <Stack direction="row" spacing={2}>
+                            <Button
+                                variant="outlined"
+                                startIcon={<Share/>}
+                            >
+                                Share
+                            </Button>
+                        </Stack>
                         <Button
                             variant="outlined"
                             startIcon={<ArrowBack/>}
-                            onClick={() => navigate("/countries")}
+                            onClick={() => navigate("/authors")}
                         >
-                            Back to Countries
+                            Back to Authors
                         </Button>
                     </Grid>
                 </Grid>
@@ -108,4 +136,4 @@ const CountryDetails = () => {
 
 }
 
-export default CountryDetails;
+export default AuthorDetails;

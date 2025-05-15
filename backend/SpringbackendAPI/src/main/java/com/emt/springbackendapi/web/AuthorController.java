@@ -45,6 +45,12 @@ public class AuthorController {
         return this.authorService.findAll();
     }
 
+    @GetMapping("/{id}")
+    private ResponseEntity<UpdateAuthorDTO> getAuthorById(@PathVariable Long id) {
+        return this.authorService.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+
+
     @Operation(summary = "Register a new author", description = "Creates a new author with the provided details.")
     @ApiResponse(responseCode = "200", description = "Author successfully created", content =
     @Content(schema = @Schema(implementation = UpdateAuthorDTO.class)))

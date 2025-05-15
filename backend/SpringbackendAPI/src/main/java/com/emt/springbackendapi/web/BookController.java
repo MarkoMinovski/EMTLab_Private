@@ -57,7 +57,7 @@ public class BookController {
     @ApiResponse(responseCode = "200", description = "Book successfully added", content =
     @Content(schema = @Schema(implementation = UpdateBookDTO.class)))
     @PutMapping()
-    private ResponseEntity<UpdateBookDTO> registerNewBook(BookDTO bookDTO) {
+    private ResponseEntity<UpdateBookDTO> registerNewBook(@RequestBody BookDTO bookDTO) {
         Optional<Author> authorOfBookToBeRegistered = this.authorDomainService.findById(bookDTO.getAuthor());
         if (authorOfBookToBeRegistered.isPresent()) {
             Optional<UpdateBookDTO> optionalUpdateBookDTOReturnValue = this.bookService.
