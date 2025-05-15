@@ -8,6 +8,7 @@ import CountryDetails from "./ui/components/countryComponents/CountryDetails.jsx
 import AuthorPage from "./ui/pages/AuthorPage.jsx";
 import AuthorDetails from "./ui/components/authorComponents/AuthorDetails.jsx";
 import BooksPage from "./ui/pages/BooksPage.jsx";
+import BookDetails from "./ui/components/bookComponents/BookDetails.jsx";
 
 
 
@@ -25,6 +26,7 @@ function App() {
                     <Route path="authors" element={<AuthorPage/>}/>
                     <Route path="authors/:id" element={<AuthorDetails/>}/>
                     <Route path="books" element={<BooksPage/>}/>
+                    <Route path="books/:id" element={<BookDetails/>}/>
                 </Route>
             </Routes>
 
